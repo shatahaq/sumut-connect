@@ -3,8 +3,8 @@ import sys
 from pathlib import Path
 
 from qgis.core import (
-    QgsApplication, QgsFillSymbol, QgsGraduatedSymbolRenderer, QgsLayoutExporter, QgsLayoutItemLabel,
-    QgsLayoutItemMap, QgsLayoutItemPage, QgsLayoutItemScaleBar, QgsLayoutPoint, QgsLayoutSize,
+    Qgis, QgsApplication, QgsFillSymbol, QgsGraduatedSymbolRenderer, QgsLayoutExporter, QgsLayoutItemLabel,
+    QgsLayoutItemMap, QgsLayoutItemPage, QgsLayoutItemScaleBar, QgsLayoutItemShape, QgsLayoutPoint, QgsLayoutSize,
     QgsPrintLayout, QgsProject, QgsRendererRange, QgsUnitTypes,
 )
 from qgis.PyQt.QtGui import QColor, QFont
@@ -90,11 +90,12 @@ scale.attemptMove(QgsLayoutPoint(16,172))
 title('Jumlah fasilitas',222,45,64,11,14,'Georgia',bold=True)
 for i,(color,label) in enumerate(zip(colors,labels)):
     y=59+8*i
-    sw=title('',222,y+1,9,5)
-    sw.setBackgroundColor(QColor(color))
-    sw.setBackgroundEnabled(True)
-    sw.setFrameEnabled(True)
-    sw.setFrameStrokeColor(QColor('#5d786b'))
+    sw = QgsLayoutItemShape(layout)
+    sw.setShapeType(QgsLayoutItemShape.Rectangle)
+    sw.setSymbol(QgsFillSymbol.createSimple({'color':color,'outline_color':'#5d786b','outline_width':'.18'}))
+    layout.addLayoutItem(sw)
+    sw.attemptMove(QgsLayoutPoint(222,y+1))
+    sw.attemptResize(QgsLayoutSize(9,5))
     title(label,234,y,48,7,10)
 title(f'{total:,} titik terpetakan'.replace(',','.'),222,108,64,10,12,bold=True)
 title(f'{counts["health"]} kesehatan\n{counts["education"]} pendidikan\n{counts["economy"]} ekonomi',222,120,63,24,10)
@@ -109,6 +110,7 @@ directory.mkdir(parents=True,exist_ok=True)
 exporter = QgsLayoutExporter(layout)
 pdf = QgsLayoutExporter.PdfExportSettings()
 pdf.dpi = 160
+pdf.textRenderFormat = Qgis.TextRenderFormat.AlwaysText
 assert exporter.exportToPdf(str(directory/'Peta-Tematik-QGIS.pdf'),pdf) == QgsLayoutExporter.Success
 image = QgsLayoutExporter.ImageExportSettings()
 image.dpi = 130

@@ -6,7 +6,7 @@ export default defineConfig({
   timeout: 45000,
   use: {
     baseURL: process.env.E2E_BASE_URL || 'http://127.0.0.1:4173',
-    browserName: 'chromium',
+    browserName: process.env.BROWSER_NAME === 'firefox' ? 'firefox' : 'chromium',
     channel: process.env.BROWSER_CHANNEL || undefined,
   },
   webServer: process.env.E2E_BASE_URL ? undefined : {

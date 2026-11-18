@@ -47,7 +47,8 @@ test('peta desktop, fasilitas, basemap, filter, pengukuran dan geolokasi', async
   await page.getByLabel('Nama fasilitas atau wilayah').fill('rumah sakit');
   await page.locator('.result-list li button').first().click();
   await expect(page.getByRole('region',{name:'Detail fasilitas'})).toBeVisible();
-  await page.locator('.map-facility').first().click();
+  const chosen = await page.getByRole('region',{name:'Detail fasilitas'}).getByRole('heading').innerText();
+  await map.getByTitle(chosen,{exact:true}).click();
   await expect(page.locator('.leaflet-popup')).toContainText('Objek OpenStreetMap');
   await page.getByRole('button',{name:'Tutup detail'}).click();
   await page.getByRole('button',{name:'Reset filter'}).click();
@@ -123,4 +124,28 @@ test('radius, koroplet, perbandingan, metadata dan layout ponsel 375 px', async 
   await expect(page.getByText('ODbL 1.0').first()).toBeVisible();
   expect(await width()).toBe(375);
   expect(errors).toEqual([]);
+});
+
+test('dataset gagal dapat dimuat ulang dan gangguan ubin tetap menyisakan batas lokal', async ({page}) => {
+  let blocked=true;
+  await page.route('**/data/datasets.json',route=>blocked ? route.abort() : route.continue());
+  await page.goto('');
+  await expect(page.getByRole('alert')).toContainText('Atlas gagal dimuat');
+  blocked=false;
+  await page.route('https://tile.openstreetmap.org/**',route=>route.abort());
+  await page.getByRole('button',{name:'Muat ulang data'}).click();
+  await expect(page.getByRole('heading',{name:'Jelajahi peta'})).toBeVisible();
+  await page.getByRole('button',{name:'Pakai batas lokal'}).click();
+  await expect(page.getByRole('combobox',{name:'Peta dasar'})).toHaveValue('vector');
+  await expect(page.locator('.leaflet-overlay-pane path').first()).toBeAttached();
+  await page.getByRole('link',{name:'Akses',exact:true}).click();
+  await page.getByLabel('Bujur',{exact:true}).fill('96');
+  await page.getByLabel('Lintang',{exact:true}).fill('0');
+  await page.getByLabel('Radius (km)').fill('0.1');
+  await page.getByRole('button',{name:'Jalankan analisis'}).click();
+  await expect(page.getByText('Tidak ada titik terpetakan')).toBeVisible();
+  for (const width of [320,375,820,1024,1440]) {
+    await page.setViewportSize({width,height:900});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
+  }
 });
