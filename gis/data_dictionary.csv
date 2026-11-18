@@ -1,0 +1,29 @@
+layer,field,type,unit,description
+regions,code,text,kode,Identitas empat digit kabupaten atau kota
+regions,name,text,nama,Nama administratif baku
+regions,source_id,text,ID,Identitas fitur geoBoundaries
+regions,area_km2,decimal,km²,Luas elipsoidal WGS84 dari batas penuh
+regions,health,integer,titik,Jumlah kategori kesehatan
+regions,education,integer,titik,Jumlah kategori pendidikan
+regions,economy,integer,titik,Jumlah kategori ekonomi
+regions,total,integer,titik,Jumlah ketiga kategori
+regions,geometry,MultiPolygon,derajat,EPSG:4326
+facilities,id,text,ID,Awalan n atau w diikuti ID OSM
+facilities,name,text,nama,Nama OSM atau kosong
+facilities,category,text,kode,"health, education, economy"
+facilities,subtype,text,tag,Tag amenity OpenStreetMap
+facilities,region_code,text,kode,Padanan regions.code dari gabung spasial
+facilities,osm_type,text,tipe,Node atau way OSM
+facilities,geometry,Point,derajat,EPSG:4326
+roads,id,text,ID,ID way OpenStreetMap dengan awalan w
+roads,name,text,nama,Nama jalan OSM atau kosong
+roads,road_class,text,tag,Tag highway OpenStreetMap
+roads,ref,text,kode,Referensi jalan atau kosong
+roads,length_km,decimal,km,Panjang elipsoidal setelah klip
+roads,geometry,MultiLineString,derajat,EPSG:4326
+radius_zone,radius_m,integer,m,Radius geodesik dari pusat
+radius_zone,count,integer,titik,Jumlah fasilitas yang masuk radius
+radius_zone,method,text,metode,Metode analisis zona
+radius_zone,geometry,Polygon,derajat,EPSG:4326
+radius_facilities,atribut dasar,text,mengikuti fasilitas,Atribut dasar sama dengan facilities
+radius_facilities,distance_m,decimal,m,Jarak elipsoidal dari pusat

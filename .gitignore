@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.pglite/
+__pycache__/
+*.qgz~
+*.gpkg-shm
+*.gpkg-wal
+test-results/
+playwright-report/
